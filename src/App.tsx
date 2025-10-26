@@ -6,23 +6,23 @@ import { ListingsPage } from './pages/ListingsPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { WalletProvider } from './context/walletContext'; // ✅ ensure file name matches exactly
 
+// ✅ Handles all routing logic inside Router
 const AppContent: React.FC = () => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [favorites, setFavorites] = useState(['1', '4']);
   const navigate = useNavigate();
 
   const handleConnectWallet = () => {
-    // Mock wallet connection with animation
-    setTimeout(() => {
-      setWalletConnected(!walletConnected);
-    }, 1000);
+    // This can later trigger WalletModal or MetaMask logic
+    setWalletConnected(true);
   };
 
   const handleToggleFavorite = (propertyId: string) => {
-    setFavorites(prev => 
+    setFavorites((prev) =>
       prev.includes(propertyId)
-        ? prev.filter(id => id !== propertyId)
+        ? prev.filter((id) => id !== propertyId)
         : [...prev, propertyId]
     );
   };
@@ -33,63 +33,64 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <Navbar 
-        onConnectWallet={handleConnectWallet}
-        walletConnected={walletConnected}
-      />
-      
+      {/* ✅ Navbar at top of all pages */}
+      <Navbar />
+
       <Routes>
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
-            <HomePage 
+            <HomePage
               onToggleFavorite={handleToggleFavorite}
               onPropertyClick={handlePropertyClick}
             />
-          } 
+          }
         />
-        <Route 
-          path="/listings" 
+        <Route
+          path="/listings"
           element={
-            <ListingsPage 
+            <ListingsPage
               onToggleFavorite={handleToggleFavorite}
               onPropertyClick={handlePropertyClick}
             />
-          } 
+          }
         />
-        <Route 
-          path="/property/:id" 
-          element={<PropertyDetailPage onToggleFavorite={handleToggleFavorite} />} 
+        <Route
+          path="/property/:id"
+          element={<PropertyDetailPage onToggleFavorite={handleToggleFavorite} />}
         />
-        <Route 
-          path="/favorites" 
+        <Route
+          path="/favorites"
           element={
-            <FavoritesPage 
+            <FavoritesPage
               favorites={favorites}
               onToggleFavorite={handleToggleFavorite}
               onPropertyClick={handlePropertyClick}
             />
-          } 
+          }
         />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
-            <DashboardPage 
+            <DashboardPage
               walletConnected={walletConnected}
               onConnectWallet={handleConnectWallet}
             />
-          } 
+          }
         />
       </Routes>
     </>
   );
 };
 
+// ✅ Main App wrapper — contains WalletProvider & Router
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <WalletProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </WalletProvider>
   );
 }
 
